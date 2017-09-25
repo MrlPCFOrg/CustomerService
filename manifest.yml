@@ -1,0 +1,11 @@
+---
+applications:
+- name: customer-service
+  instance: 1
+  host: customer-service
+  path: build\libs\customer-service-0.0.1-SNAPSHOT.jar
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git
+  services:
+    - oms-eureka
+    - oms-circuitbreaker
+    - oms-mongo
