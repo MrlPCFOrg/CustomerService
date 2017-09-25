@@ -5,6 +5,7 @@ applications:
   host: customer-service
   path: build\libs\customer-service-0.0.1-SNAPSHOT.jar
   buildpack: https://github.com/cloudfoundry/java-buildpack.git
+  memory: 1024M
   services:
     - oms-eureka
     - oms-circuitbreaker
