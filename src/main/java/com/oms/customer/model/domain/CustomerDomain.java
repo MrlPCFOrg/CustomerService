@@ -1,6 +1,5 @@
 package com.oms.customer.model.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.oms.customer.model.BillingAddress;
 
 import java.time.Instant;
@@ -8,7 +7,6 @@ import java.util.List;
 
 public class CustomerDomain {
 
-    @JsonIgnore
     private String id;
     private String name;
     private String type;
