@@ -6,4 +6,8 @@ import com.oms.customer.model.response.CustomerResponse;
 public interface CustomerService {
 
     CustomerResponse addCustomer(CustomerRequest customerRequest);
+
+    CustomerResponse getCustomerByName(String name, Boolean isLike);
+
+    void deleteCustomer(String name);
 }

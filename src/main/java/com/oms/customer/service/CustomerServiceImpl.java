@@ -27,14 +27,17 @@ public class CustomerServiceImpl implements CustomerService {
 
         List<CustomerDomain> customerRequestList = customerRequest.getCustomer();
         List<CustomerEntity> customerEntityList = new ArrayList<>();
-        for (CustomerDomain customerDomain : customerRequestList) {
+
+        customerRequestList.forEach(customerDomain -> {
             customerEntityList.add(domainToEntity(customerDomain));
-        }
+        });
+
         List<CustomerEntity> customerRepoList = customerRespository.insert(customerEntityList);
         List<CustomerDomain> customerResponseList = new ArrayList<>();
-        for (CustomerEntity customerEntity : customerRepoList) {
+        customerRepoList.forEach(customerEntity -> {
             customerResponseList.add(entityToDomain(customerEntity));
-        }
+        });
+
         return customerResponse.setCustomer(customerResponseList);
     }
 
@@ -50,12 +53,35 @@ public class CustomerServiceImpl implements CustomerService {
 
     private CustomerDomain entityToDomain(CustomerEntity customerEntity){
         return new CustomerDomain()
+                .setId(customerEntity.getId())
                 .setName(customerEntity.getName())
                 .setType(customerEntity.getType())
                 .setCreatedDate(customerEntity.getCreatedDate().toInstant())
                 .setEmail(customerEntity.getEmail())
                 .setPhoneNo(customerEntity.getPhoneNo())
                 .setBillingAddress(customerEntity.getBillingAddress());
+    }
+
+    @Override
+    public void deleteCustomer(String id){
+        customerRespository.delete(id);
+    }
+
+    @Override
+    public CustomerResponse getCustomerByName(String name, Boolean isLike){
+        CustomerResponse customerResponse = new CustomerResponse();
+        List<CustomerEntity> customerRepoList;
+        if(isLike){
+            customerRepoList= customerRespository.findByNameLike(name);
+        }else{
+            customerRepoList = customerRespository.findByName(name);
+        }
+        List<CustomerDomain> customerResponseList = new ArrayList<>();
+        customerRepoList.forEach(customerEntity -> {
+            customerResponseList.add(entityToDomain(customerEntity));
+        });
+        return customerResponse.setCustomer(customerResponseList);
+
     }
 
 }
