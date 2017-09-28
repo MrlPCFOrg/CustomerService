@@ -9,5 +9,5 @@ public interface CustomerService {
 
     CustomerResponse getCustomerByName(String name, Boolean isLike);
 
-    void deleteCustomer(String name);
+    void deleteCustomer(String id);
 }
