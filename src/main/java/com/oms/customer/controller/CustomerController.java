@@ -1,6 +1,5 @@
 package com.oms.customer.controller;
 
-import com.oms.common.web.EnableOMSCommonWeb;
 import com.oms.customer.model.request.CustomerRequest;
 import com.oms.customer.model.response.CustomerResponse;
 import com.oms.customer.service.CustomerService;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@EnableOMSCommonWeb
 @RequestMapping("/Customer")
 public class CustomerController {
 
@@ -32,7 +30,7 @@ public class CustomerController {
         return customerService.addCustomer(customerRequest);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/find/{name}")
     @ResponseStatus(HttpStatus.FOUND)
     public CustomerResponse getCustomer(@PathVariable String name, @RequestParam(required = false) boolean isLike) {
         return customerService.getCustomerByName(name, isLike);
