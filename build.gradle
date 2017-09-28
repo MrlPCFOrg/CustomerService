@@ -7,6 +7,7 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+//		compile files('libs/oms-common-web-0.0.1-SNAPSHOT.jar')
 	}
 }
 
@@ -43,6 +44,7 @@ dependencies {
 	compile ('org.codehaus.groovy:groovy-all:2.4.5')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('com.oms.common.web:oms-common-web:0.0.1-SNAPSHOT')
+
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile ('org.codehaus.groovy.modules.http-builder:http-builder:0.7.1')
 	testCompile 'org.springframework:spring-test'
