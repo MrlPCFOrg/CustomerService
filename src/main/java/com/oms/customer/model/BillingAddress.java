@@ -2,11 +2,21 @@ package com.oms.customer.model;
 
 public class BillingAddress {
 
+    private String id;
     private String address;
     private String city;
     private String state;
     private String country;
     private String phoneNo;
+
+    public String getId() {
+        return id;
+    }
+
+    public BillingAddress setId(String id) {
+        this.id = id;
+        return this;
+    }
 
     public String getAddress() {
         return address;

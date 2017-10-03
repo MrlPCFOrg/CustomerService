@@ -4,9 +4,22 @@ info:
 spring:
   application:
     name: customer-service
-#  data:
-#    mongodb:
-#      uri: mongodb://localhost:27017/OMS
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/OMS
+
+
+oms:
+  appKey: customer-service
+  common:
+    web:
+      config:
+        swagger:
+          controllerPackage: com.oms.customer.controller
+          author: Panneerselvam
+          apiName: Customer-service
+          apiVersion: 1.0.0
+          apiDescription: API for Customer-service
 
 security:
   basic:

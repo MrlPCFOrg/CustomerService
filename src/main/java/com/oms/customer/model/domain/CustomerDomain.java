@@ -1,10 +1,12 @@
 package com.oms.customer.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oms.customer.model.BillingAddress;
 
 import java.time.Instant;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CustomerDomain {
 
     private String id;
@@ -14,6 +16,7 @@ public class CustomerDomain {
     private List<BillingAddress> billingAddress;
     private String email;
     private String phoneNo;
+    private Instant updatedDate;
 
     public String getId() {
         return id;
@@ -75,6 +78,15 @@ public class CustomerDomain {
 
     public CustomerDomain setPhoneNo(String phoneNo) {
         this.phoneNo = phoneNo;
+        return this;
+    }
+
+    public Instant getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public CustomerDomain setUpdatedDate(Instant updatedDate) {
+        this.updatedDate = updatedDate;
         return this;
     }
 }
