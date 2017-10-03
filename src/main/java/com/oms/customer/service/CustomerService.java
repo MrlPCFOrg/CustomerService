@@ -1,5 +1,6 @@
 package com.oms.customer.service;
 
+import com.oms.customer.model.domain.CustomerDomain;
 import com.oms.customer.model.request.CustomerRequest;
 import com.oms.customer.model.response.CustomerResponse;
 
@@ -9,5 +10,7 @@ public interface CustomerService {
 
     CustomerResponse getCustomerByName(String name, Boolean isLike);
 
-    void deleteCustomer(String name);
+    void deleteCustomer(String id);
+
+    CustomerResponse updateCustomer(String customerId, CustomerDomain customerUpdate);
 }
