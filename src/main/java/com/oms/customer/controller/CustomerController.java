@@ -1,11 +1,13 @@
 package com.oms.customer.controller;
 
+import com.oms.customer.model.domain.CustomerDomain;
 import com.oms.customer.model.request.CustomerRequest;
 import com.oms.customer.model.response.CustomerResponse;
 import com.oms.customer.service.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,8 +39,13 @@ public class CustomerController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable String id){
+    public void delete(@PathVariable String id) {
         customerService.deleteCustomer(id);
+    }
+
+    @PatchMapping("/update/{customerId}")
+    public CustomerResponse updateCustomer(@PathVariable String customerId, @RequestBody CustomerDomain customerUpdate) {
+        return customerService.updateCustomer(customerId, customerUpdate);
     }
 
 }

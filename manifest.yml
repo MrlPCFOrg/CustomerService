@@ -10,3 +10,4 @@ applications:
     - oms-eureka
     - oms-circuitbreaker
     - oms-mongo
+#    - oms-configclient

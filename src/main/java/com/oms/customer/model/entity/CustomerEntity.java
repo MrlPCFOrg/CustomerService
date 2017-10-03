@@ -4,6 +4,7 @@ import com.oms.customer.model.BillingAddress;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class CustomerEntity {
     private List<BillingAddress> billingAddress;
     private String email;
     private String phoneNo;
+
+    @DateTimeFormat
+    private Date updatedDate;
 
 
     public String getId() {
@@ -87,4 +91,12 @@ public class CustomerEntity {
         return this;
     }
 
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public CustomerEntity setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
+        return this;
+    }
 }
