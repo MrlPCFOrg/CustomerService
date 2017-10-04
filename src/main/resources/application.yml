@@ -25,7 +25,9 @@ security:
   basic:
     enabled: false
 logging:
-  level: error
+  level:
+    root: DEBUG
+    org.springframework.web: ERROR
+    com.oms.customer: DEBUG
 server:
   port: 9091
-    #com.oms.cutomer: debug

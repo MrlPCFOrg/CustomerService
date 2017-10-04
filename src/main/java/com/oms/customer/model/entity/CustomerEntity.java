@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 @Document(collection = "customer")
 public class CustomerEntity {
@@ -98,5 +99,11 @@ public class CustomerEntity {
     public CustomerEntity setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;
         return this;
+    }
+
+    public <T> void fieldValueIfUpdated(T updateValue, T sourceValue, Function<T, ?> diffSetter) {
+        if (updateValue != null && !updateValue.equals(sourceValue)) {
+            diffSetter.apply(updateValue);
+        }
     }
 }

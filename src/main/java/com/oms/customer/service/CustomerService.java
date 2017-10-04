@@ -8,7 +8,7 @@ public interface CustomerService {
 
     CustomerResponse addCustomer(CustomerRequest customerRequest);
 
-    CustomerResponse getCustomerByName(String name, Boolean isLike);
+    CustomerResponse getCustomerByName(String name, boolean isLike);
 
     void deleteCustomer(String id);
 
