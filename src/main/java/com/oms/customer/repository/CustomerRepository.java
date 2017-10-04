@@ -13,9 +13,6 @@ public interface CustomerRepository extends MongoRepository<CustomerEntity,Strin
     @Query(value = "{'name': {$regex : ?0, $options: 'i'}}")
     List<CustomerEntity> findByNameLike(String name);
 
-
     CustomerEntity findById(String customerId);
-
-
 
 }
