@@ -45,10 +45,20 @@ class CustomerCRUDAccSpec extends Specification{
         getResponse.status == HttpStatus.FOUND.value()
         getResponse.responseData.customer[0].name == customerName
 
+        when:
+        def getAllResponse = customerHelper.getAllCustomer(null)
+
+        then:'Checking the response code for Get All Customer'
+        getAllResponse
+        getAllResponse.status == HttpStatus.FOUND.value()
+        getAllResponse.responseData.customer.size > 1
+
         def customerId = getResponse.responseData.customer[0].id
 
         cleanup:
         customerHelper.deleteCustomer(null, customerId)
 
     }
+
+
 }

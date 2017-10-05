@@ -43,4 +43,11 @@ class CustomerHelper {
                 headers: ['Authorization': "Bearer ${token}", 'Content-Type': 'application/json'])
         return response
     }
+
+    def getAllCustomer(String token) {
+        def response = restClient.get(
+                path: "/Customer/findAll",
+                headers: ['Authorization': "Bearer ${token}", 'Content-Type': 'application/json'])
+        return response
+    }
 }
