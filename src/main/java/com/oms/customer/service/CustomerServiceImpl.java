@@ -1,6 +1,5 @@
 package com.oms.customer.service;
 
-import com.google.common.collect.Lists;
 import com.oms.customer.exceptionhandler.BillingAddressException;
 import com.oms.customer.exceptionhandler.CustomerNotFoundException;
 import com.oms.customer.model.BillingAddress;
@@ -10,25 +9,25 @@ import com.oms.customer.model.request.CustomerRequest;
 import com.oms.customer.model.response.CustomerResponse;
 import com.oms.customer.repository.CustomerRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    private CustomerRepository customerRespository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
-    private String testConfig;
+    private CustomerRepository customerRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRespository) {
-        this.customerRespository = customerRespository;
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
     }
 
     @Override
@@ -43,7 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerEntityList.add(domainToEntity(customerDomain));
         });
 
-        List<CustomerEntity> customerRepoList = customerRespository.insert(customerEntityList);
+        List<CustomerEntity> customerRepoList = customerRepository.insert(customerEntityList);
         List<CustomerDomain> customerResponseList = new ArrayList<>();
         customerRepoList.forEach(customerEntity -> {
             customerResponseList.add(entityToDomain(customerEntity));
@@ -81,17 +80,21 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(String id) {
-        customerRespository.delete(id);
+        customerRepository.delete(id);
     }
 
     @Override
-    public CustomerResponse getCustomerByName(String name, Boolean isLike) {
+    public CustomerResponse getCustomerByName(String name, boolean isLike) {
+        if (StringUtils.isEmpty(name)){
+            LOGGER.info("message=CustomerName is empty");
+            throw new CustomerNotFoundException();
+        }
         CustomerResponse customerResponse = new CustomerResponse();
         List<CustomerEntity> customerRepoList;
         if (isLike) {
-            customerRepoList = customerRespository.findByNameLike(name);
+            customerRepoList = customerRepository.findByNameLike(name);
         } else {
-            customerRepoList = customerRespository.findByName(name);
+            customerRepoList = customerRepository.findByName(name);
         }
         List<CustomerDomain> customerResponseList = new ArrayList<>();
         customerRepoList.forEach(customerEntity -> {
@@ -102,12 +105,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponse updateCustomer(String customerId, CustomerDomain customerUpdate) {
-        CustomerEntity customerSource = customerRespository.findById(customerId);
+        CustomerEntity customerSource = customerRepository.findById(customerId);
         if (customerSource == null) {
+            LOGGER.info("message=CustomerId is not found in the repository");
             throw new CustomerNotFoundException();
         }
         CustomerEntity customerToUpdate = sourceCompare(customerUpdate, customerSource);
-        CustomerEntity customerUpdated = customerRespository.save(customerToUpdate);
+        CustomerEntity customerUpdated = customerRepository.save(customerToUpdate);
         CustomerResponse customerResponse = new CustomerResponse();
         List<CustomerDomain> customerResponseList = new ArrayList<>();
         customerResponseList.add(entityToDomain(customerUpdated));
@@ -118,9 +122,11 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerEntity sourceCompare(CustomerDomain customerUpdate, CustomerEntity customerSource) {
         CustomerEntity entityUpdate = new CustomerEntity();
         if (customerUpdate == null) {
+            LOGGER.info("message=CustomerName is not found in the repository");
             throw new CustomerNotFoundException();
         }
         entityUpdate.setId(customerSource.getId());
+        //entityUpdate.fieldValueIfUpdated(customerUpdate.getName(),customerSource.getName(), entityUpdate::setName);
         entityUpdate.setName(StringUtils.equals(customerUpdate.getName(), customerSource.getName()) ? null : customerUpdate.getName());
         entityUpdate.setType(StringUtils.equals(customerUpdate.getType(), customerSource.getType()) ? null : customerUpdate.getType());
         entityUpdate.setUpdatedDate(new Date());
