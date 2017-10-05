@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 
-public interface CustomerRepository extends MongoRepository<CustomerEntity,String> {
+public interface CustomerRepository extends MongoRepository<CustomerEntity,String> , CustomerRepositoryCustom{
 
     List<CustomerEntity> findByName(String name);
 

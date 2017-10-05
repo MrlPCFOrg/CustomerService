@@ -111,7 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomerNotFoundException();
         }
         CustomerEntity customerToUpdate = sourceCompare(customerUpdate, customerSource);
-        CustomerEntity customerUpdated = customerRepository.save(customerToUpdate);
+        CustomerEntity customerUpdated = customerRepository.updateCustomer(customerId,customerToUpdate);
         CustomerResponse customerResponse = new CustomerResponse();
         List<CustomerDomain> customerResponseList = new ArrayList<>();
         customerResponseList.add(entityToDomain(customerUpdated));
@@ -126,18 +126,20 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomerNotFoundException();
         }
         entityUpdate.setId(customerSource.getId());
-        //entityUpdate.fieldValueIfUpdated(customerUpdate.getName(),customerSource.getName(), entityUpdate::setName);
-        entityUpdate.setName(StringUtils.equals(customerUpdate.getName(), customerSource.getName()) ? null : customerUpdate.getName());
-        entityUpdate.setType(StringUtils.equals(customerUpdate.getType(), customerSource.getType()) ? null : customerUpdate.getType());
+        entityUpdate.fieldValueIfUpdated(customerUpdate.getName(),customerSource.getName(), entityUpdate::setName);
+        entityUpdate.fieldValueIfUpdated(customerUpdate.getType(), customerSource.getType(), entityUpdate::setType);
         entityUpdate.setUpdatedDate(new Date());
-        entityUpdate.setPhoneNo(StringUtils.equals(customerUpdate.getPhoneNo(), customerSource.getPhoneNo()) ? null : customerUpdate.getPhoneNo());
-        entityUpdate.setEmail(StringUtils.equals(customerUpdate.getEmail(), customerSource.getEmail()) ? null : customerUpdate.getEmail());
+        entityUpdate.fieldValueIfUpdated(customerUpdate.getPhoneNo(), customerSource.getPhoneNo(), entityUpdate::setPhoneNo);
+        entityUpdate.fieldValueIfUpdated(customerUpdate.getEmail(), customerSource.getEmail(), entityUpdate::setEmail);
         entityUpdate.setBillingAddress(billingAddressCompare(customerUpdate.getBillingAddress(), customerSource.getBillingAddress()));
         return entityUpdate;
 
     }
 
     private List<BillingAddress> billingAddressCompare(List<BillingAddress> domainAddressList, List<BillingAddress> sourceAddressList) {
+        if(domainAddressList == null){
+            return null;
+        }
         List<BillingAddress> billingAddressListUpdated = new ArrayList<>();
         domainAddressList.forEach(domainAddress -> {
             sourceAddressList.stream().forEach(sourceAddress -> {
@@ -163,5 +165,15 @@ public class CustomerServiceImpl implements CustomerService {
         return sourceAddressList.stream().anyMatch(sourceAddress -> sourceAddress.getId().equals(id));
     }
 
-
+    @Override
+    public CustomerResponse getAllCustomer(){
+        CustomerResponse customerResponse = new CustomerResponse();
+        List<CustomerEntity> customerRepoList;
+        List<CustomerDomain> customerResponseList = new ArrayList<>();
+        customerRepoList = customerRepository.findAll();
+        customerRepoList.forEach(customerEntity -> {
+            customerResponseList.add(entityToDomain(customerEntity));
+        });
+        return customerResponse.setCustomer(customerResponseList);
+    }
 }

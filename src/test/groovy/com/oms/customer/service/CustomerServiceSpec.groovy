@@ -79,4 +79,24 @@ class CustomerServiceSpec extends Specification {
         1 * customerRepository.delete(id)
     }
 
+    def 'getAllCustomer'() {
+        given:
+        BillingAddress billingAddress = new BillingAddress(address: 'Taramani', city: 'Chennai', country: 'India', phoneNo: '987654321')
+        List<BillingAddress> billingAddressReq = new ArrayList<>()
+        billingAddressReq.add(billingAddress)
+        def customerEntityList = [new CustomerEntity(id: '123456', name: 'Panneer', type: 'ADMIN', billingAddress: billingAddressReq, email: 'panneerselvam@xyz.com', phoneNo: '12345678')]
+
+        when:
+        CustomerResponse customerResponse = subject.getAllCustomer()
+
+        then:
+        1 * customerRepository.findAll() >> customerEntityList
+        customerResponse
+        customerResponse.customer[0].name == 'Panneer'
+        customerResponse.customer[0].id == '123456'
+        customerResponse.customer[0].type == 'ADMIN'
+        customerResponse.customer[0].email == 'panneerselvam@xyz.com'
+        customerResponse.customer[0].billingAddress[0].address == 'Taramani'
+    }
+
 }

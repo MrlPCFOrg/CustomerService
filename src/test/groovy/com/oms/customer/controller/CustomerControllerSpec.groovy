@@ -81,4 +81,16 @@ class CustomerControllerSpec extends Specification {
         response.status == OK.value()
     }
 
+    def 'getAllCustomer delegates to service'() {
+        given:
+        CustomerResponse mockCustomerResponse = new CustomerResponse()
+
+        when:
+        def response = mockMvc.perform(get("/Customer/findAll")).andReturn().response
+
+        then:
+        1 * customerService.getAllCustomer() >> mockCustomerResponse
+        response.status == FOUND.value()
+    }
+
 }
