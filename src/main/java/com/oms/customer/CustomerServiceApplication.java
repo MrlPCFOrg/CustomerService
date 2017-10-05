@@ -8,8 +8,8 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
 @EnableOMSCommonWeb
-/*@EnableCircuitBreaker
-@EnableEurekaClient*/
+@EnableCircuitBreaker
+@EnableEurekaClient
 public class CustomerServiceApplication {
 
 	public static void main(String[] args) {
