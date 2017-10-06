@@ -13,4 +13,6 @@ public interface CustomerService {
     void deleteCustomer(String id);
 
     CustomerResponse updateCustomer(String customerId, CustomerDomain customerUpdate);
+
+    CustomerResponse getAllCustomer();
 }

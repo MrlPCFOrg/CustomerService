@@ -56,4 +56,11 @@ public class CustomerController {
         return customerService.updateCustomer(customerId, customerUpdate);
     }
 
+    @GetMapping("/findAll")
+    @ResponseStatus(HttpStatus.FOUND)
+    public CustomerResponse getAllCustomers(){
+        LOGGER.info("message=Finding All Customers");
+        return customerService.getAllCustomer();
+    }
+
 }
