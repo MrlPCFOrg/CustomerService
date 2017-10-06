@@ -57,7 +57,7 @@ class CustomerServiceSpec extends Specification {
         CustomerResponse customerResponse = subject.getCustomerByName(name, isLike)
 
         then:
-        1 * customerRepository.findByNameLike({
+        1 * customerRepository.findByNameIsLike({
             it}) >> customerEntityList
         customerResponse
         customerResponse.customer[0].name == 'Panneer'
@@ -91,6 +91,32 @@ class CustomerServiceSpec extends Specification {
 
         then:
         1 * customerRepository.findAll() >> customerEntityList
+        customerResponse
+        customerResponse.customer[0].name == 'Panneer'
+        customerResponse.customer[0].id == '123456'
+        customerResponse.customer[0].type == 'ADMIN'
+        customerResponse.customer[0].email == 'panneerselvam@xyz.com'
+        customerResponse.customer[0].billingAddress[0].address == 'Taramani'
+    }
+
+    def 'updateCustomer'(){
+        given:
+        BillingAddress billingAddress = new BillingAddress(id:'123456', address: 'Taramani', city: 'Chennai', country: 'India', phoneNo: '987654321')
+        List<BillingAddress> billingAddressReq = new ArrayList<>()
+        billingAddressReq.add(billingAddress)
+        CustomerDomain customerDomain = new CustomerDomain(name: 'Panneer', type: 'ADMIN', email: 'panneerselvam@xyz.com', phoneNo: '12345678', billingAddress: billingAddressReq)
+        CustomerEntity customerEntity = new CustomerEntity(id: '123456', name: 'Panneer', type: 'ADMIN', billingAddress: billingAddressReq, email: 'panneerselvam@xyz.com', phoneNo: '12345678')
+        String customerId = '123456'
+
+        when:
+        CustomerResponse customerResponse = subject.updateCustomer(customerId, customerDomain)
+
+        then:
+
+        1 * customerRepository.findById(customerId) >> customerEntity
+        1 * customerRepository.updateCustomer(customerId, {
+            it
+        } ) >> customerEntity
         customerResponse
         customerResponse.customer[0].name == 'Panneer'
         customerResponse.customer[0].id == '123456'

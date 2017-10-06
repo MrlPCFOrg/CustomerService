@@ -7,6 +7,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.Pair;
@@ -35,8 +36,13 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
     @Override
     public CustomerEntity updateCustomer(String customerId, CustomerEntity customerUpdate) {
         List<Pair<Query, Update>> updateOperations = new ArrayList<>();
-        updateOperations.addAll(buildCustomerFieldUpdateOperations(customerId,customerUpdate));
-        updateOperations.addAll(buildBillingAddressUpdateOperations(customerId,customerUpdate));
+
+        List<Pair<Query, Update>> updateOperationsForCustomer = buildCustomerFieldUpdateOperations(customerId,customerUpdate);
+        List<Pair<Query, Update>> updateOperationsForBillingAddress = buildBillingAddressUpdateOperations(customerId,customerUpdate);
+
+        if(updateOperationsForCustomer != null)
+        updateOperations.addAll(updateOperationsForCustomer);
+        updateOperations.addAll(updateOperationsForBillingAddress);
 
         if (!updateOperations.isEmpty()) {
             BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, CustomerEntity.class);
@@ -49,48 +55,49 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
         return customerEntity;
     }
 
-    private Collection<? extends Pair<Query,Update>> buildBillingAddressUpdateOperations(String customerId, CustomerEntity customerUpdate) {
+    private List<Pair<Query, Update>> buildBillingAddressUpdateOperations(String customerId, CustomerEntity customerUpdate) {
         if (CollectionUtils.isEmpty(customerUpdate.getBillingAddress())) {
             return Collections.emptyList();
         }
         List<Pair<Query, Update>> billingUpdateOperations = new ArrayList<>();
         customerUpdate.getBillingAddress().stream().forEach(billingAddress -> {
             Query query = new Query();
-            query.addCriteria(where(CUSTOMER_ID).is(new ObjectId(customerId)))
-                    .addCriteria(where("billingAddress").elemMatch(where("_id").is(billingAddress.getId())));
-//                 .addCriteria(where("billingAddress.$._id").is(billingAddress.getId()));
+            query.addCriteria(new Criteria().andOperator(where("_id").is(new ObjectId(customerId)),
+                                                         where("billingAddress._id").is(billingAddress.getId())));
             Update update = new Update();
-            Document billingAddressDocument = new Document();
+
             if(billingAddress.getAddress() != null){
-                billingAddressDocument.put("address", billingAddress.getAddress());
+                update.set("billingAddress.$.address", billingAddress.getAddress());
             }
             if(billingAddress.getCity() != null){
-                billingAddressDocument.put("city", billingAddress.getCity());
+                update.set("billingAddress.$.city", billingAddress.getCity());
             }
             if(billingAddress.getCountry() != null) {
-                billingAddressDocument.put("country", billingAddress.getCountry());
+                update.set("billingAddress.$.country", billingAddress.getCountry());
             }
             if(billingAddress.getPhoneNo() != null){
-                billingAddressDocument.put("phoneNo",billingAddress.getPhoneNo());
+                update.set("billingAddress.$.phoneNo",billingAddress.getPhoneNo());
             }
             if(billingAddress.getState() != null) {
-                billingAddressDocument.put("state", billingAddress.getState());
+                update.set("billingAddress.$.state", billingAddress.getState());
             }
-            update.push("billingAddress.$.", billingAddressDocument);
             billingUpdateOperations.add(Pair.of(query,update));
         });
 
         return billingUpdateOperations;
     }
 
-    private Collection<? extends Pair<Query,Update>> buildCustomerFieldUpdateOperations(String customerId , CustomerEntity customerUpdate){
+    private List<Pair<Query, Update>> buildCustomerFieldUpdateOperations(String customerId , CustomerEntity customerUpdate){
         Update update = new Update();
         addFieldIfNotEmpty(update,"name", customerUpdate.getName());
         addFieldIfNotEmpty(update, "type", customerUpdate.getType());
-        addFieldIfNotEmpty(update, "phone", customerUpdate.getPhoneNo());
+        addFieldIfNotEmpty(update, "phoneNo", customerUpdate.getPhoneNo());
         addFieldIfNotEmpty(update,"email", customerUpdate.getEmail());
         Query query = new Query();
         query.addCriteria(where(CUSTOMER_ID).is(new ObjectId(customerId)));
+        if(update.getUpdateObject().keySet().isEmpty()){
+            return null;
+        }
         return Collections.singletonList(Pair.of(query,update));
   }
 
