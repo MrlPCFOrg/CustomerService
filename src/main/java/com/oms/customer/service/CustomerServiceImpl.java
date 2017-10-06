@@ -92,7 +92,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerResponse customerResponse = new CustomerResponse();
         List<CustomerEntity> customerRepoList;
         if (isLike) {
-            customerRepoList = customerRepository.findByNameLike(name);
+            customerRepoList = customerRepository.findByNameIsLike(name);
         } else {
             customerRepoList = customerRepository.findByName(name);
         }

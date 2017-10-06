@@ -51,6 +51,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/update/{customerId}")
+    @ResponseStatus(HttpStatus.CREATED)
     public CustomerResponse updateCustomer(@PathVariable String customerId, @RequestBody CustomerDomain customerUpdate) {
         LOGGER.info("message=Updating Customer with id={}", customerId);
         return customerService.updateCustomer(customerId, customerUpdate);
