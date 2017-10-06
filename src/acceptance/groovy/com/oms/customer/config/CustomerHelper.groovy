@@ -50,4 +50,14 @@ class CustomerHelper {
                 headers: ['Authorization': "Bearer ${token}", 'Content-Type': 'application/json'])
         return response
     }
+
+    def updateCustomer(String token, String customerId, Map customerDomain) {
+        def response = restClient.patch(
+                path: "/Customer/update/${customerId}",
+                contentType: 'application/json;charset=UTF-8',
+                headers: ['Authorization': "Bearer ${token}", 'Content-Type': 'application/json'],
+                body: customerDomain
+        )
+        return response
+    }
 }

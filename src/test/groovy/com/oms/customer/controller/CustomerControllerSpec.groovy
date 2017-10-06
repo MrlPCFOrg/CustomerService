@@ -10,6 +10,7 @@ import static org.springframework.http.HttpStatus.CREATED
 import static org.springframework.http.HttpStatus.FOUND
 import static org.springframework.http.HttpStatus.OK
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
@@ -27,12 +28,12 @@ class CustomerControllerSpec extends Specification {
         mockMvc = standaloneSetup(subject).build()
     }
 
-    def 'addCustomer delegates to service'(){
+    def 'addCustomer delegates to service'() {
         given:
         CustomerResponse mockCustomerResponse = new CustomerResponse()
 
-        def billingAddressRequest = [[address :'address', city:'city', state:'state', country:'country', phoneNo:'phoneNo']]
-        def customerRequest = [customer:[[name: 'xyx', type:'ADMIN',  billingAddress: billingAddressRequest, email:'email@xyz.com', phoneNo: 'phoneNo']]]
+        def billingAddressRequest = [[address: 'address', city: 'city', state: 'state', country: 'country', phoneNo: 'phoneNo']]
+        def customerRequest = [customer: [[name: 'xyx', type: 'ADMIN', billingAddress: billingAddressRequest, email: 'email@xyz.com', phoneNo: 'phoneNo']]]
         String requestBody = new ObjectMapper().writeValueAsString(customerRequest)
 
         when:
@@ -43,7 +44,7 @@ class CustomerControllerSpec extends Specification {
         then:
         1 * customerService.addCustomer({
             it
-            it.customer[0].name =='xyz'
+            it.customer[0].name == 'xyz'
             it.customer[0].email == 'email@xyz.com'
         }) >> mockCustomerResponse
         response.status == CREATED.value()
@@ -69,7 +70,7 @@ class CustomerControllerSpec extends Specification {
         'Panneer' | 'false' | false
     }
 
-    def 'deleteCustomer delegates to service'(){
+    def 'deleteCustomer delegates to service'() {
         given:
         String id = "123456"
 
@@ -91,6 +92,29 @@ class CustomerControllerSpec extends Specification {
         then:
         1 * customerService.getAllCustomer() >> mockCustomerResponse
         response.status == FOUND.value()
+    }
+
+    def 'updateCustomer delegates to service'() {
+        given:
+        CustomerResponse mockCustomerResponse = new CustomerResponse()
+
+        def billingAddressRequest = [[address: 'address', city: 'city', state: 'state', country: 'country', phoneNo: 'phoneNo']]
+        def customerRequest = [customer: [[name: 'xyx', type: 'ADMIN', billingAddress: billingAddressRequest, email: 'email@xyz.com', phoneNo: 'phoneNo']]]
+        String requestBody = new ObjectMapper().writeValueAsString(customerRequest)
+
+        String customerId = '123456'
+
+        when:
+        def response = mockMvc.perform(patch("/Customer/update/{customerId}", customerId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody)).andReturn().response
+
+        then:
+        1 * customerService.updateCustomer(customerId,{
+            it
+        }) >> mockCustomerResponse
+        response.status == CREATED.value()
+
     }
 
 }
