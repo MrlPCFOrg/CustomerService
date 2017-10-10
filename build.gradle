@@ -59,6 +59,7 @@ dependencies {
 		transitive = false
 	}
 	compile('com.oms.common.web:oms-common-web:0.0.1-SNAPSHOT')
+	compile('com.oms.common.security:oms-common-security:0.0.1-SNAPSHOT')
 }
 
 springBoot  {
