@@ -9,6 +9,6 @@ applications:
   memory: 1024M
   services:
     - oms-eureka
-#    - oms-circuitbreaker
+    - oms-circuitbreaker
     - oms-mongo
-#    - oms-configclient
+    - oms-configserver
