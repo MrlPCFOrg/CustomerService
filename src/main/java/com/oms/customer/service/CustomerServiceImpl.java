@@ -3,6 +3,7 @@ package com.oms.customer.service;
 import com.oms.customer.exceptionhandler.BillingAddressException;
 import com.oms.customer.exceptionhandler.CustomerNotFoundException;
 import com.oms.customer.model.BillingAddress;
+import com.oms.customer.model.domain.CustomerCustom;
 import com.oms.customer.model.domain.CustomerDomain;
 import com.oms.customer.model.entity.CustomerEntity;
 import com.oms.customer.model.request.CustomerRequest;
@@ -175,5 +176,19 @@ public class CustomerServiceImpl implements CustomerService {
             customerResponseList.add(entityToDomain(customerEntity));
         });
         return customerResponse.setCustomer(customerResponseList);
+    }
+
+    @Override
+    public CustomerCustom getCustomerById(String customerId) {
+        CustomerCustom customerCustom = new CustomerCustom();
+        if (StringUtils.isEmpty(customerId)){
+            LOGGER.info("message=customerId is empty");
+            throw new CustomerNotFoundException();
+        }
+        CustomerEntity customerEntity = customerRepository.findById(customerId);
+        customerCustom.setCustomerName(customerEntity.getName());
+        customerCustom.setEmail(customerEntity.getEmail());
+        customerCustom.setPhoneNo(customerEntity.getPhoneNo());
+        return customerCustom;
     }
 }
