@@ -1,5 +1,6 @@
 package com.oms.customer.controller;
 
+import com.oms.customer.model.domain.CustomerCustom;
 import com.oms.customer.model.domain.CustomerDomain;
 import com.oms.customer.model.request.CustomerRequest;
 import com.oms.customer.model.response.CustomerResponse;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/Customer")
+@RequestMapping("/customer")
 public class CustomerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerController.class);
@@ -62,6 +63,13 @@ public class CustomerController {
     public CustomerResponse getAllCustomers(){
         LOGGER.info("message=Finding All Customers");
         return customerService.getAllCustomer();
+    }
+
+    @GetMapping("/{customerId}")
+    @ResponseStatus(HttpStatus.FOUND)
+    public CustomerCustom getCustomerById(@PathVariable String customerId) {
+        LOGGER.info("message=Getting Customer Details with customerId={}", customerId);
+        return customerService.getCustomerById(customerId);
     }
 
 }

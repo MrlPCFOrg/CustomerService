@@ -29,5 +29,5 @@ logging:
     root: DEBUG
     org.springframework.web: ERROR
     com.oms.customer: DEBUG
-server:
-  port: 9091
+#server:
+#  port: 9091
